@@ -1,0 +1,5 @@
+Οδηγίες χρήσης XeTeX:
+
+Προβλήματα:
+	-- Ελληνικά στα Chapters
+	-- Combine Dictionaries (Greek,English)
