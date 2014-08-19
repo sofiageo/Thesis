@@ -1,17 +1,34 @@
-\documentclass[11pt,a4paper,draft]{book}
+\documentclass[11pt,a4paper]{book}
 \usepackage{fontspec}
 \usepackage{xgreek}
 \usepackage{hyperref}
 \usepackage{epigraph}
+\usepackage{hologo}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[Greek,Latin]{ucharclasses}
+\usepackage[
+  backend=biber,
+  style=authoryear,]
+  {biblatex}
+\usepackage{csquotes}
 \author{George Sofianos}
 \title{GPGPU Programming}
-\setmainfont{GFS Artemisia}
+\setmainfont[Kerning=On,Mapping=tex-text]{GFS Artemisia}
+\addbibresource{bibliography.bib}
 
 \begin{document}
+\chapter{Εισαγωγή}
 \epigraph{τεστ τεστ δοκιμή}{Γιώργος}
 Ιστορία του GPGPU Programming:
 Τα αρχικά GPGPU πηγάζουν απο την φράση General Purpose computation on Graphics Processing Units, ή αλλιώς γνωστή ώς GPU Computing, δηλαδή υπολογισμός γενικής χρήσης σε μονάδες επεξεργασίας γραφικών.
 Οι GPUs, είναι επεξεργαστές υψηλών επιδόσεων με δυνατότητα πολύ υψηλού υπολογισμού και διεκπεραιωτικότητας δεδομένων. Σχεδιασμένες αρχικά για γραφικά υπολογιστών με αρκετές δυσκολίες στον προγραμματισμό τους, οι σημερινές μονάδες επεξεργασίας γραφικών είναι παράλληλοι επεξεργαστές γενικής χρήσης με υποστήριξη για προσβάσιμες προγραμματιστικές διεπαφές και βιομηχανικά πρότυπα γλωσσών όπως η C. Οι προγραμματιστές που μεταφέρουν τις εφαρμογές τους σε GPUs συνήθως πετυχαίνουν ταχύτητες πολλαπλάσιες από ότι μια αντίστοιχη εφαρμογή ειδικά βελτιστοποιημένη για κεντρική μονάδα επεξεργασίας (CPU).
 Ο όρος GPGPU δημιουργήθηκε από τον \href{http://en.wikipedia.org/wiki/Mark_Harris_(programmer)}{Mark Harris} το 2002 όταν συνειδητοποίησε ότι αναπτυσσόταν μια τάση για χρήση των μονάδων επεξεργασίας γραφικών για εφαρμογές που δεν είχαν σχέση με γραφικά. 
 \input{tools.tex}
+\input{sdk.tex}
+
+
+\section{Βιβλιογραφικές αναφορές}
+H πρώτη βιβλιογραφική αναφορά είναι: \parencite{doe}, ενώ η δεύτερη είναι \parencite{papadopoulos}.
+
+\printbibliography[title={Βιβλιογραφία}]
 \end{document}
