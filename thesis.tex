@@ -7,9 +7,14 @@
 \usepackage[margin=2.5cm]{geometry}
 \usepackage[Greek,Latin]{ucharclasses}
 \usepackage[
+  backref=true,
   backend=biber,
-  style=authoryear,]
+  sortcites, ]
   {biblatex}
+\DefineBibliographyStrings{english}{%
+    backrefpage  = {see p.}, % for single page number
+    backrefpages = {see pp.} % for multiple page numbers
+}
 \usepackage{csquotes}
 \author{George Sofianos}
 \title{GPGPU Programming}
@@ -17,6 +22,11 @@
 \addbibresource{bibliography.bib}
 
 \begin{document}
+
+\maketitle
+ 
+\tableofcontents
+
 \chapter{Εισαγωγή}
 \epigraph{τεστ τεστ δοκιμή}{Γιώργος}
 Ιστορία του GPGPU Programming:
