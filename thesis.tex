@@ -1,10 +1,10 @@
-\documentclass[11pt,a4paper]{book}
+\documentclass[11pt,a4paper,twoside]{book}
 \usepackage{fontspec}
 \usepackage{xgreek}
 \usepackage{hyperref}
 \usepackage{epigraph}
 \usepackage{hologo}
-\usepackage[margin=2.5cm]{geometry}
+\usepackage[top=2.54cm, bottom=2.54cm, left=3.17cm, right=3.17cm]{geometry}
 \usepackage[Greek,Latin]{ucharclasses}
 \usepackage[
   backref=true,
@@ -15,15 +15,19 @@
     backrefpage  = {see p.}, % for single page number
     backrefpages = {see pp.} % for multiple page numbers
 }
+
+\usepackage{graphicx}
+\graphicspath{{./images/}}
 \usepackage{csquotes}
 \author{George Sofianos}
 \title{GPGPU Programming}
 \setmainfont[Kerning=On,Mapping=tex-text]{GFS Artemisia}
+%Νέες εντολές
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 \addbibresource{bibliography.bib}
 
 \begin{document}
-
-\maketitle
+\input{titlepage.tex}
  
 \tableofcontents
 
@@ -37,7 +41,7 @@
 Από το 2012, οι GPU έχουν αναπτυχθεί σε συστήματα πολυπύρηνων επεξεργαστών παράλληλου υπολογισμού δίνοντας μας την δυνατότητα για πολύ αποδοτικό χειρισμό μεγάλου όγκου δεδομένων. Αυτός ο σχεδιασμός είναι πιο αποδοτικός από ότι οι κεντρικές μονάδες επεξεργασιάς (CPU) για αλγόριθμους όπου η επεξεργασία μεγάλου όγκου δεδομένων γίνεται παράλληλα, όπως σε αλγορίθμους sort μεγάλων λιστών, μετασχηματισμό κυμάτων δυο διαστάσεων, προσομοίωση βιολογικών δυναμικών.
 \input{tools.tex}
 \input{sdk.tex}
-
+\input{applications.tex}
 
 \section{Βιβλιογραφικές αναφορές}
 H πρώτη βιβλιογραφική αναφορά είναι: \parencite{doe}, ενώ η δεύτερη είναι \parencite{papadopoulos}.
