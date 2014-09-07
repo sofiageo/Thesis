@@ -1,6 +1,8 @@
 \documentclass[12pt,a4paper,twoside]{book}
 \usepackage{fontspec}
 \usepackage{xgreek}
+%Table of Contents
+\usepackage{tocloft}
 %Άδεια
 \usepackage[scale=1]{ccicons}
 %Ρυθμίσεις για συνδέσμους
@@ -72,10 +74,16 @@
 %Fancy Header and Footer
 %\usepackage{fancyhdr}
 %\pagestyle{fancy}
-%Sections Banner
+
+
+
+%Package to put image on absolute destinations
 \usepackage[abs]{overpic}
+
+
+
+%Fancy Sections - TODO LIST
 \newcommand{\Bsection}[1]{%
-\phantomsection\addcontentsline{toc}{section}{#1}%
 %\noindent\hspace*{-11.6mm}
 \begin{overpic}[width=\textwidth]%
 	{banner.png}
@@ -87,18 +95,16 @@
 \begin{document}
 \setlist[itemize]{leftmargin=*}
 \setlist[enumerate]{leftmargin=*}
+\frontmatter
+\pagenumbering{Roman}
 \input{titlepage.tex}
- 
 \tableofcontents
-
 \input{intro.tex}
+\mainmatter
 \input{tools.tex}
 \input{sdk.tex}
 \input{applications.tex}
 \input{license.tex}
+\input{bibliography.tex}
 
-\section{Βιβλιογραφικές αναφορές}
-H πρώτη βιβλιογραφική αναφορά είναι: \parencite{opencl}, ενώ η δεύτερη είναι \parencite{papadopoulos}.
-
-\printbibliography[title={Βιβλιογραφία}]
 \end{document}
