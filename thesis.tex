@@ -1,11 +1,63 @@
-\documentclass[11pt,a4paper,twoside]{book}
+\documentclass[12pt,a4paper,twoside]{book}
 \usepackage{fontspec}
 \usepackage{xgreek}
+%Άδεια
+\usepackage[scale=1]{ccicons}
+%Ρυθμίσεις για συνδέσμους
+\usepackage[hyphens]{url}
 \usepackage{hyperref}
+%Χρώματα
+\usepackage[dvipsnames*]{xcolor}
+
 \usepackage{epigraph}
 \usepackage{hologo}
 \usepackage[top=2.54cm, bottom=2.54cm, left=3.17cm, right=3.17cm]{geometry}
 \usepackage[Greek,Latin]{ucharclasses}
+\usepackage{csquotes}
+\usepackage{enumitem}
+%Γραφικά
+\usepackage{graphicx}
+\graphicspath{{./images/}}
+\usepackage{wrapfig}
+%Διάταξη τίτλων
+\usepackage{titlesec}
+
+%Chapter title configuration
+\titleformat{\chapter}
+  {\Large\bfseries} % format
+  {}                % label
+  {0pt}             % sep
+  {\huge\centering}           % before-code
+  [
+\vspace{-0.5ex}%
+\rule{\textwidth}{0.3pt}
+] % after-code
+
+%Section title Configuration
+\titleformat{\section}
+  {\large\bfseries} % format
+  {\thesection}      % label
+  {0.5ex}             % sep
+  {\large}           % before-code
+  [
+\vspace{-0.5ex}%
+\rule{\textwidth}{0.3pt}
+] % after-code
+
+%Subsection title Configuration
+\titleformat{\subsection}
+  {\normalsize\bfseries} % format
+  {\thesubsection}                % label
+  {0.5ex}             % sep
+  {\normalsize}           % before-code
+  
+%Στοιχεία PDF
+\author{Γεώργιος Σοφιανός}
+\title{GPGPU Programming}
+\setmainfont[Kerning=On,Mapping=tex-text]{GFS Artemisia}
+%Νέες εντολές
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+%Βιβλιογραφία
 \usepackage[
   backref=true,
   backend=biber,
@@ -15,24 +67,22 @@
     backrefpage  = {see p.}, % for single page number
     backrefpages = {see pp.} % for multiple page numbers
 }
-\usepackage{titlesec}
-
-\titleformat{\chapter}
-  {\Large\bfseries} % format
-  {}                % label
-  {0pt}             % sep
-  {\huge}           % before-code
-\usepackage{enumitem}
-\usepackage{graphicx}
-\graphicspath{{./images/}}
-\usepackage{wrapfig}
-\usepackage{csquotes}
-\author{Γεώργιος Σοφιανός}
-\title{GPGPU Programming}
-\setmainfont[Kerning=On,Mapping=tex-text]{GFS Artemisia}
-%Νέες εντολές
-\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 \addbibresource{bibliography.bib}
+
+%Fancy Header and Footer
+%\usepackage{fancyhdr}
+%\pagestyle{fancy}
+%Sections Banner
+\usepackage[abs]{overpic}
+\newcommand{\Bsection}[1]{%
+\phantomsection\addcontentsline{toc}{section}{#1}%
+%\noindent\hspace*{-11.6mm}
+\begin{overpic}[width=\textwidth]%
+	{banner.png}
+	\put(0,0){\parbox{\textwidth}{\vspace{-20mm}\bfseries\color{white}\Large\centering#1}}
+\end{overpic}
+}
+
 
 \begin{document}
 \setlist[itemize]{leftmargin=*}
@@ -45,9 +95,10 @@
 \input{tools.tex}
 \input{sdk.tex}
 \input{applications.tex}
+\input{license.tex}
 
 \section{Βιβλιογραφικές αναφορές}
-H πρώτη βιβλιογραφική αναφορά είναι: \parencite{doe}, ενώ η δεύτερη είναι \parencite{papadopoulos}.
+H πρώτη βιβλιογραφική αναφορά είναι: \parencite{opencl}, ενώ η δεύτερη είναι \parencite{papadopoulos}.
 
 \printbibliography[title={Βιβλιογραφία}]
 \end{document}
