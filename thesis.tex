@@ -1,10 +1,16 @@
 \documentclass[12pt,a4paper,twoside]{book}
 \usepackage{fontspec}
 \usepackage{xgreek}
+
+
 %Table of Contents
 \usepackage{tocloft}
-%Άδεια
+
+
+%Άδεια creative commons
 \usepackage[scale=1]{ccicons}
+
+
 %Ρυθμίσεις για συνδέσμους
 \usepackage[hyphens]{url}
 \usepackage[hidelinks]{hyperref}
@@ -51,7 +57,8 @@
 \usepackage{titlesec}
 
 %Chapter title configuration
-\titleformat{\chapter}
+%\titlespacing*{\chapter}{0pt}{-2\baselineskip}{1em}
+\titleformat{\chapter}[display]
   {\Large\bfseries} % format
   {}                % label
   {0pt}             % sep
@@ -60,7 +67,7 @@
 \vspace{-0.5ex}%
 \rule{\textwidth}{0.3pt}
 ] % after-code
-
+\titlespacing*{\chapter}{0cm}{-50pt}{0pt}[0pt]
 %Section title Configuration
 \titleformat{\section}
   {\large\bfseries} % format
@@ -97,11 +104,6 @@
 }
 \addbibresource{bibliography.bib}
 
-%Fancy Header and Footer
-%\usepackage{fancyhdr}
-%\pagestyle{fancy}
-
-
 
 %Package to put image on absolute destinations
 \usepackage[abs]{overpic}
@@ -124,14 +126,14 @@
 \frontmatter
 \pagenumbering{Roman}
 \input{titlepage.tex}
+\input{abstract.tex}
 \tableofcontents
 \input{intro.tex}
 \mainmatter
-\input{tools.tex}
 \input{platforms.tex}
 \input{more.tex}
 \input{applications.tex}
+\input{problem.tex}
 \input{methodology.tex}
-\input{bibliography.tex}
-
+\printbibliography[title={Βιβλιογραφία}]
 \end{document}
