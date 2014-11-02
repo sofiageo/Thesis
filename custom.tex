@@ -1,0 +1,22 @@
+\newenvironment{apptable}[2]
+{\small
+\begin{longtable}[c]{|p{3cm}|p{6cm}|l|l|}
+\caption{#1\label{#2}}\\
+
+\hline Όνομα & Περιγραφή & Επιτάχυνση & Multi-GPU \\ \hline
+\endfirsthead
+ 
+\hline
+\multicolumn{4}{|c|}{Συνέχεια πίνακα \ref{#2}}\\
+\hline
+Όνομα & Περιγραφή & Επιτάχυνση & Multi-GPU \\ 
+\hline
+\endhead
+
+\hline
+\endfoot
+ 
+\hline
+\endlastfoot}
+{\end{longtable}
+\normalsize}
