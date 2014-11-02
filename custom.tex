@@ -1,3 +1,4 @@
+% New environment for Long Tables
 \newenvironment{apptable}[2]
 {\small
 \begin{longtable}[c]{|p{3cm}|p{6cm}|l|l|}
@@ -20,3 +21,39 @@
 \endlastfoot}
 {\end{longtable}
 \normalsize}
+
+%Japanese font for Kanji
+\newfontfamily\kanji{MingLiU}
+
+%Chapter title configuration
+%\titlespacing*{\chapter}{0pt}{-2\baselineskip}{1em}
+\titleformat{\chapter}[display]
+  {\Large\bfseries} % format
+  {}                % label
+  {0pt}             % sep
+  {\huge\centering}           % before-code
+  [
+\vspace{-0.5ex}%
+\rule{\textwidth}{0.3pt}
+] % after-code
+\titlespacing*{\chapter}{0cm}{-50pt}{0pt}[0pt]
+%Section title Configuration
+\titleformat{\section}
+  {\large\bfseries} % format
+  {\thesection}      % label
+  {0.5ex}             % sep
+  {\large}           % before-code
+  [
+\vspace{-0.5ex}%
+\rule{\textwidth}{0.3pt}
+] % after-code
+
+%Subsection title Configuration
+\titleformat{\subsection}
+  {\normalsize\bfseries} % format
+  {\thesubsection}                % label
+  {0.5ex}             % sep
+  {\normalsize}           % before-code
+  
+%Sections on new page
+\newcommand{\sectionbreak}{\clearpage}

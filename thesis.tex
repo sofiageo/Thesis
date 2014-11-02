@@ -4,11 +4,9 @@
 
 %Long Tables
 \usepackage{longtable}
-\input{custom.tex}
 
 %Table of Contents
 \usepackage{tocloft}
-
 
 %Άδεια creative commons
 \usepackage[scale=1]{ccicons}
@@ -58,36 +56,6 @@
 \usepackage{wrapfig}
 %Διάταξη τίτλων
 \usepackage{titlesec}
-
-%Chapter title configuration
-%\titlespacing*{\chapter}{0pt}{-2\baselineskip}{1em}
-\titleformat{\chapter}[display]
-  {\Large\bfseries} % format
-  {}                % label
-  {0pt}             % sep
-  {\huge\centering}           % before-code
-  [
-\vspace{-0.5ex}%
-\rule{\textwidth}{0.3pt}
-] % after-code
-\titlespacing*{\chapter}{0cm}{-50pt}{0pt}[0pt]
-%Section title Configuration
-\titleformat{\section}
-  {\large\bfseries} % format
-  {\thesection}      % label
-  {0.5ex}             % sep
-  {\large}           % before-code
-  [
-\vspace{-0.5ex}%
-\rule{\textwidth}{0.3pt}
-] % after-code
-
-%Subsection title Configuration
-\titleformat{\subsection}
-  {\normalsize\bfseries} % format
-  {\thesubsection}                % label
-  {0.5ex}             % sep
-  {\normalsize}           % before-code
   
 %Στοιχεία PDF
 \author{Γεώργιος Σοφιανός}
@@ -122,7 +90,7 @@
 \end{overpic}
 }
 
-
+\input{custom.tex}
 \begin{document}
 \setlist[itemize]{leftmargin=*}
 \setlist[enumerate]{leftmargin=*}
