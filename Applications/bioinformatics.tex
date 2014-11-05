@@ -25,12 +25,12 @@
 \end{figure}\\
 Το σύστημα ερευνά μεταξύ άλλων τα παρακάτω προβλήματα
 \begin{itemize}
-\item Εξομοίωση της ωρίμανσης πρωτεολυτικών του HIV - Μια απο τις πιο σημαντικές πτυχές της ωρίμανσης του HIV είναι το πώς η πρωτεΐνη "ψαλιδιών", δημιουργείται. Η απάντηση σε αυτό το ερώτημα χρειάζεται εξομοιώσεις μοριακής δυναμικής στο όριο των μοντέρνων υπολογιστικών δυνατοτήτων. Το GPUGRID μας επιτρέπει να λύσουμε αυτο το πρόβλημα και έχουμε καταφέρει να δείξουμε οτι τα πρώτα "ψαλίδια" κόβονται απο το "σκοινί" που είναι δεμένα. Αυτό το γεγονός συμβαίνει στην αρχή της ωρίμανσης, και αν σταματήσουμε την ωρίμανση των πρωτεολυτικών, τότε θα σταματήσουμε και την ωρίμανση του HIV σαν σύνολο.
+\item Εξομοίωση της ωρίμανσης πρωτεολυτικών του HIV - Μια απο τις πιο σημαντικές πτυχές της ωρίμανσης του HIV είναι το πώς η πρωτεΐνη "ψαλιδιών", δημιουργείται. Η απάντηση σε αυτό το ερώτημα χρειάζεται εξομοιώσεις μοριακής δυναμικής στο όριο των μοντέρνων υπολογιστικών δυνατοτήτων. Το GPUGRID μας επιτρέπει να λύσουμε αυτο το πρόβλημα και έχουμε καταφέρει να δείξουμε οτι τα πρώτα "ψαλίδια" κόβονται απο το "σκοινί" που είναι δεμένα. Αυτό το γεγονός συμβαίνει στην αρχή της ωρίμανσης, και αν σταματήσουμε την ωρίμανση των πρωτεολυτικών, τότε θα σταματήσουμε και την ωρίμανση του HIV σαν σύνολο.\cite{gpugrid-1}
 \item Ανακάλυψη του ρόλου των μεμβρανών λιπιδίων στην δραστηριότητα ενζύμων.
 \item Μοριακή εξομοίωση αισθητήρων ντοπαμίνης κάτω απο φυσιολογικές ιονικές δυνάμεις.
 \item Αποκάλυψη των μηχανισμών αντίδρασης φαρμάκων καρκίνου παχέος εντέρου - Ο καρκίνος είναι βασικά ή ανεξέλεγκτη ανάπτυξη ιστών και εισβολή από μεταλλαγμένα κύτταρα σε έναν οργανισμό. Σε αντίθεση με τις παραδοσιακές χημειοθεραπείες ή ραδιοθεραπείες, οι νεότερες θεραπείες στοχεύουν σε συγκεκριμένους στόχους κακοήθων κυττάρων. Αυτό επιτυγχάνεται με τον εντοπισμό ορισμένων πρωτεϊνών που εκφράζονται διαφορικά σε ογκογεννητικά κύτταρα. Με την βοήθεια του GPUGRID, επιτυγχάνεται η επεξήγηση των μοριακών μηχανισμών που συμβαίνουν στα μεταλλαγμένα μόρια των κυττάρων.
 \end{itemize}
-Η εκτέλεση του GPUGRID στις GPUs, καινοτομεί στον εθελοντικό υπολογισμό, παραδίδοντας εφαρμογές υπερ-υπολογιστών, σε υποδομές χαμηλού κόστους. Η απόδοση των μονάδων γραφικής επεξεργασίας, καταγράφεται και συγκρίνεται σε σχέση με άλλους χρήστες, ανάλογα με την διάρκεια ολοκλήρωσης των WU (Work Units).\\
+Η εκτέλεση του GPUGRID στις GPUs, καινοτομεί στον εθελοντικό υπολογισμό, παραδίδοντας εφαρμογές υπερ-υπολογιστών, σε υποδομές χαμηλού κόστους. Η απόδοση των μονάδων γραφικής επεξεργασίας, καταγράφεται και συγκρίνεται σε σχέση με άλλους χρήστες, ανάλογα με την διάρκεια ολοκλήρωσης των WU (Work Units)\cite{gpugrid-2}.\\
 \begin{figure}[h]
 \centering
 \includegraphics[scale=0.75]{gpugrid-charts}
@@ -39,38 +39,38 @@
 
 \subsection{Προγράμματα}
 \begin{apptable}{Βιοπληροφορική}{bioinformatics}
-BarraCUDA & Sequence mapping software & 6-10x & ΝΑΙ \\ \hline
-CUDASW++ & Open source software for Smith-Waterman protein database searches on GPUs & 10-50x & ΝΑΙ \\ \hline
-CUSHAW & Parallelized short read aligner & 10x & ΝΑΙ \\ \hline
-G-BLASTN & GPU-accelerated nucleotide alignment tool based on the widely used NCBI-BLAST & 4-15x & \\ \hline
-GPU-BLAST & Local search with fast k-tuple heuristic & 3-4x & \\ \hline
-mCUDA-MEME & Ultrafast scalable motif discovery algorithm based on MEME & 4-10x & ΝΑΙ \\ \hline
-MUMmer GPU & High-throughput local sequence alignment program & 3-10x & \\ \hline
-NVBIO & NVBIO is an open source C++ library of reusable components designed to accelerate bioinformatics applications using CUDA. & 4-5x & ΝΑΙ \\ \hline
-NVBowtie & A largely complete implementation of the Bowtie2 aligner on top of NVBIO & 2.75x-8.35x & ΝΑΙ \\ \hline
-PEANUT &Read mapper for DNA or RNA sequence reads to a known reference genome. & 10x & \\ \hline
-REACTA & The purpose of REACTA is to quantify the contribution of genetic variation to phenotypic variation for complex traits. & 2-4x & ΝΑΙ \\ \hline
-SeqNFind & Next Generation sequencing and genomic comparisons & 400x & ΝΑΙ \\ \hline
-SOAP3 & GPU-based software for aligning short reads with a reference sequence. It can find all alignments with k mismatches, where k is chosen from 0 to 3 & 10x & ΝΑΙ \\ \hline
-SOAP3-dp & Ultra-fast GPU-based tool for short read alignment via index-assisted dynamic programming & 28-64x & ΝΑΙ \\ \hline
-UGENE & Opensource Smith-Waterman for SSE/CUDA, Suffix array based repeats finder and dotplot & 6-8x & ΝΑΙ \\ \hline
-WideLM & Fits numerous linear models to a fixed design and response & 150x & ΝΑΙ \\ \hline
+BarraCUDA & Λογισμικό χαρτογράφησης ακολουθίας & 6-10x & ΝΑΙ \\ \hline
+CUDASW++ & Λογισμικό ανοιχτού κώδικα για αναζητήσεις Smith-Waterman σε πρωτεϊνικές βάσεις δεδομένων με χρήση GPUs & 10-50x & ΝΑΙ \\ \hline
+CUSHAW & Ευθυγραμμιστής παράλληλων μικρών προσπελάσεων  & 10x & ΝΑΙ \\ \hline
+G-BLASTN & Επιταχυνόμενο από GPU εργαλείο ευθυγράμμισης νουκλεοτιδίων βασισμένο στο ευρέως διαδεδομένο NCBI-BLAST & 4-15x & \\ \hline
+GPU-BLAST & Τοπική αναζήτηση με γρήγορους ευρετικούς  αλγόριθμους k-tuple & 3-4x & \\ \hline
+mCUDA-MEME & Πολύ γρήγορη κλιμακωτή ανακάλυψη μοτίβων βασισμένη στο MEME & 4-10x & ΝΑΙ \\ \hline
+MUMmer GPU & Πρόγραμμα υψηλής απόδοσης τοπικής ευθυγράμμισης ακολουθίας & 3-10x & \\ \hline
+NVBIO & Βιβλιοθήκη ανοιχτού κώδικα C++ αποτελούμενη από στοιχεία επαναχρησιμοποιήσιμα σχεδιασμένα για να επιταχύνουν εφαρμογές βιοπληροφορικής με χρήση CUDA. & 4-5x & ΝΑΙ \\ \hline
+NVBowtie & Μια σε μεγάλο βαθμό ολοκληρωμένη εφαρμογή του ευθυγραμμιστή Bowtie2 πάνω από το NVBIO & 2.75x-8.35x & ΝΑΙ \\ \hline
+PEANUT & Καθορισμός ανάγνωσης για ακολουθίες DNA ή RNA σε γνωστή αναφορά γονιδιώματος. & 10x & \\ \hline
+REACTA & Ο σκοπός του REACTA είναι ο ποσοτικός προσδιορισμός της συμβολής της γενετικής διακύμανσης στην φαινοτυπική διακύμανση σε πολύπλοκα χαρακτηριστικά. & 2-4x & ΝΑΙ \\ \hline
+SeqNFind & Ακολουθία επόμενης γενιάς και συγκρίσεις γονιδιωμάτων & 400x & ΝΑΙ \\ \hline
+SOAP3 & Λογισμικό βασισμένο σε GPU για ευθυγράμμιση μικρών προσπελάσεων με αναφορά ακολουθίας. Μπορεί να βρει όλες τις ευθυγραμμίσεις με k ασυμφωνίες, όπου το k είναι ένας αριθμός απο το 0 έως το 3 & 10x & ΝΑΙ \\ \hline
+SOAP3-dp & Πολύ γρήγορο εργαλείο βασισμένο σε GPU για ευθυγραμμίσεις μικρών προσπελάσεων μέσω δυναμικού προγραμματισμού υποβοηθούμενου από ευρετήριο & 28-64x & ΝΑΙ \\ \hline
+UGENE & Λογισμικό ανοιχτού κώδικα Smith-Waterman για SSE/CUDA, επαναλήψεις βασισμένες σε πίνακα δεικτών & 6-8x & ΝΑΙ \\ \hline
+WideLM & Ταιριάζει πολυάριθμα γραμμικά μοντέλα σε μια σταθερή σχεδίαση και απάντηση & 150x & ΝΑΙ \\ \hline
 \end{apptable}
 
 
-\begin{apptable}{Μοριακή δυναμική}{molecular}
-ACEMD & GPU simulation of molecular mechanics force fields, implicit and explicit solvent & & \\ \hline
-AMBER & Suite of programs to simulate molecular dynamics on biomolecule & & \\ \hline
-CHARMM & MD package to simulate molecular dynamics on biomolecule & & \\ \hline
-DESMOND & High-speed molecular dynamics simulations of biological systems & & \\ \hline
-DL-POLY & Simulate macromolecules, polymers, ionic systems, etc on a distributed memory parallel computer & & \\ \hline
-ESPResSo & Highly versatile software package for performing and analyzing scientific Molecular Dynamics. & & \\ \hline
-Folding@Home & A distributed computing project that studies protein folding, misfolding, aggregation, and related diseases & & \\ \hline
-GPUGrid.net & A distributed computing project that uses GPUs for molecular simulations & & \\ \hline
-GROMACS & Simulation of biochemical molecules with complicated bond interactions & & \\ \hline
-HALMD & Large-scale simulations of simple and complex liquids & & \\ \hline
-HOOMD-Blue & Particle dynamics package written grounds up for GPUs & & \\ \hline
-LAMMPS & Classical molecular dynamics package & & \\ \hline
-NAMD & Designed for high-performance simulation of large molecular systems & & \\ \hline
-OpenMM & Library and application for molecular dynamics for HPC with GPUs & & \\ \hline
-\end{apptable}
+%\begin{apptable}{Μοριακή δυναμική}{molecular}
+%ACEMD & GPU simulation of molecular mechanics force fields, implicit and explicit solvent & & \\ \hline
+%AMBER & Suite of programs to simulate molecular dynamics on biomolecule & & \\ \hline
+%CHARMM & MD package to simulate molecular dynamics on biomolecule & & \\ \hline
+%DESMOND & High-speed molecular dynamics simulations of biological systems & & \\ \hline
+%DL-POLY & Simulate macromolecules, polymers, ionic systems, etc on a distributed memory parallel computer & & \\ \hline
+%ESPResSo & Highly versatile software package for performing and analyzing scientific Molecular Dynamics. & & \\ \hline
+%Folding@Home & A distributed computing project that studies protein folding, misfolding, aggregation, and related diseases & & \\ \hline
+%GPUGrid.net & A distributed computing project that uses GPUs for molecular simulations & & \\ \hline
+%GROMACS & Simulation of biochemical molecules with complicated bond interactions & & \\ \hline
+%HALMD & Large-scale simulations of simple and complex liquids & & \\ \hline
+%HOOMD-Blue & Particle dynamics package written grounds up for GPUs & & \\ \hline
+%LAMMPS & Classical molecular dynamics package & & \\ \hline
+%NAMD & Designed for high-performance simulation of large molecular systems & & \\ \hline
+%OpenMM & Library and application for molecular dynamics for HPC with GPUs & & \\ \hline
+%\end{apptable}

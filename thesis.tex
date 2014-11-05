@@ -11,10 +11,6 @@
 %Άδεια creative commons
 \usepackage[scale=1]{ccicons}
 
-
-%Ρυθμίσεις για συνδέσμους
-\usepackage[hyphens]{url}
-\usepackage[hidelinks]{hyperref}
 %Χρώματα
 \usepackage[dvipsnames*]{xcolor}
 %Μαθηματικές εκφράσεις
@@ -34,12 +30,20 @@
 
 %Fancy Headers package
 \usepackage{fancyhdr} 
-\pagestyle{fancy}
+\fancypagestyle{main} {
 \fancyhf{}
 \fancyhead[LE,RO]{\nouppercase\rightmark}
 \fancyhead[RE,LO]{\nouppercase\leftmark}
 \fancyfoot[CE,CO]{\thepage}
 \fancyfoot[LE,RO]{}
+}
+\fancypagestyle{front} {
+\fancyhf{}
+\fancyfoot[CE,CO]{\thepage}
+\fancyfoot[LE,RO]{}
+}
+
+
 
 %Font Awesome Icons
 \usepackage{fontawesome}
@@ -56,13 +60,16 @@
 \usepackage{wrapfig}
 %Διάταξη τίτλων
 \usepackage{titlesec}
-  
+ 
+%Ρυθμίσεις για συνδέσμους
+\usepackage[hyphens]{url}
+\usepackage[hidelinks]{hyperref}
+
 %Στοιχεία PDF
 \author{Γεώργιος Σοφιανός}
 \title{GPGPU Programming}
 \setmainfont[Kerning=On,Mapping=tex-text]{GFS Artemisia}
-%Νέες εντολές
-\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
 %Βιβλιογραφία
 \usepackage[
   backref=true,
@@ -95,12 +102,14 @@
 \setlist[itemize]{leftmargin=*}
 \setlist[enumerate]{leftmargin=*}
 \frontmatter
+\pagestyle{front}
 \pagenumbering{Roman}
 \input{titlepage.tex}
 \input{abstract.tex}
 \tableofcontents
 \input{intro.tex}
 \mainmatter
+\pagestyle{main}
 \input{platforms.tex}
 \input{more.tex}
 \input{applications.tex}

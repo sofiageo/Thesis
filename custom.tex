@@ -25,6 +25,9 @@
 %Japanese font for Kanji
 \newfontfamily\kanji{MingLiU}
 
+%more fonts
+\newfontfamily\arial{Arial}
+
 %Chapter title configuration
 %\titlespacing*{\chapter}{0pt}{-2\baselineskip}{1em}
 \titleformat{\chapter}[display]
@@ -37,6 +40,7 @@
 \rule{\textwidth}{0.3pt}
 ] % after-code
 \titlespacing*{\chapter}{0cm}{-50pt}{0pt}[0pt]
+
 %Section title Configuration
 \titleformat{\section}
   {\large\bfseries} % format
@@ -54,6 +58,8 @@
   {\thesubsection}                % label
   {0.5ex}             % sep
   {\normalsize}           % before-code
-  
 %Sections on new page
 \newcommand{\sectionbreak}{\clearpage}
+
+%Οριζόντια γραμμή μεγάλη
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
