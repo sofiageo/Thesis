@@ -42,6 +42,13 @@
 \fancyfoot[CE,CO]{\thepage}
 \fancyfoot[LE,RO]{}
 }
+\fancypagestyle{longchapter} {
+\fancyhf{}
+\fancyhead[LE,RO]{\nouppercase\rightmark}
+\fancyhead[RE,LO]{}
+\fancyfoot[CE,CO]{\thepage}
+\fancyfoot[LE,RO]{}
+}
 
 
 
@@ -78,8 +85,8 @@
   sortcites, ]
   {biblatex}
 \DefineBibliographyStrings{english}{%
-    backrefpage  = {δείτε σ.}, % for single page number
-    backrefpages = {see pp.} % for multiple page numbers
+    backrefpage  = {Σελίδα}, % for single page number
+    backrefpages = {Σελίδες} % for multiple page numbers
 }
 \addbibresource{bibliography.bib}
 
@@ -115,6 +122,8 @@
 \input{more.tex}
 \input{applications.tex}
 \input{problem.tex}
+\pagestyle{longchapter}
 \input{methodology.tex}
+\pagestyle{main}
 \printbibliography[title={Βιβλιογραφία}]
 \end{document}
