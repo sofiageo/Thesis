@@ -1,12 +1,407 @@
-\section{Ανάλυση διεπαφής προγραμματισμού εφαρμογών}
-\subsection{Υλοποίηση OpenGL}
-\subsubsection{Αποστολή}
+\chapter{Ανάλυση διεπαφής προγραμματισμού}
+
+\section{Υλοποίηση CUDA}
+Παρακάτω θα δούμε ένα απλό υπολογιστικό παράδειγμα στο οποίο εκτελούμε μια απλή αλγεβρική εξίσωση με την χρήση CUDA $y[i] = alpha*x[i] + y[i] for x,y in R^N$ \cite{code-1}
+\begin{lstlisting}[basicstyle=\scriptsize]
+//
+// simpleCUDA
+//
+// This simple code sample demonstrates how to perform a simple linear
+// algebra operation using CUDA, single precision axpy:
+// y[i] = alpha*x[i] + y[i] for x,y in R^N and a scalar alpha
+//
+\end{lstlisting}
+
+Φορτώνουμε τις βιβλιοθήκες που χρειάζεται το πρόγραμμα μας
+\begin{lstlisting}[basicstyle=\scriptsize]
+#include <stdio.h>
+#include <math.h>
+#include <cuda_runtime.h>
+\end{lstlisting}
+
+Γενικές μεταβλητές και ενότητα επιλογών
+\begin{lstlisting}[basicstyle=\scriptsize]
+// problem size (vector length) N
+static int N = 123456;
+
+// number of threads per block
+static int numThreadsPerBlock = 256;
+
+// device to use in case there is more than one
+static int selectedDevice = 0;
+
+\end{lstlisting}
+Διαδικασία πυρήνα στην CPU
+\begin{lstlisting}[basicstyle=\scriptsize]
+void saxpy_serial(int n, float alpha, float *x, float *y)
+{
+  int i;
+  for (i=0; i<n; i++)
+    y[i] = alpha*x[i] + y[i];
+}
+\end{lstlisting}
+Διαδικασία πυρήνα στην συσκευή CUDA. Αρχικά υπολογίζεται ο γενικός δείκτης στον vector, από τον αριθμό του πρόσφατου block, των αριθμό των νημάτων σε κάθε block, και τον αριθμό του πρόσφατου νήματος μέσα στο block. 
+\begin{lstlisting}[basicstyle=\scriptsize]
+__global__ void saxpy_parallel(int n, float alpha, float *x, float *y)
+{
+  int i = blockIdx.x * blockDim.x + threadIdx.x;
+\end{lstlisting}
+Με εξαίρεση ειδικών περιπτώσεων, ο συνολικός αριθμός των νημάτων σε όλα τα block προτίθεται σε αριθμό μεγαλύτερο από το μέγεθος n του διανύσματος, οπότε αυτός ο έλεγχος είναι υπερβολικά χρήσιμος για να αποφύγουμε να γράψουμε πέρα από την μνήμη για το διάνυσμα y.
+\begin{lstlisting}[basicstyle=\scriptsize]
+  if (i<n)
+    y[i] = alpha*x[i] + y[i];
+}
+\end{lstlisting}
+Ρουτίνα ελέγχου λαθών. Πρέπει να συγχρονίσουμε πρώτα τις διαδικασίες για να εντοπίσουμε λάθη τα οποία δημιουργούνται λόγω των ασύγχρονων διαδικασιών που σε αντίθετη περίπτωση θα μπορούσαν να περάσουν απαρατήρητα.
+\begin{lstlisting}[basicstyle=\scriptsize]
+void checkErrors(char *label)
+{
+  cudaError_t err;
+
+  err = cudaThreadSynchronize();
+  if (err != cudaSuccess)
+  {
+    char *e = (char*) cudaGetErrorString(err);
+    fprintf(stderr, "CUDA Error: %s (at %s)", e, label);
+  }
+
+  err = cudaGetLastError();
+  if (err != cudaSuccess)
+  {
+    char *e = (char*) cudaGetErrorString(err);
+    fprintf(stderr, "CUDA Error: %s (at %s)", e, label);
+  }
+}
+\end{lstlisting}
+Κύρια ρουτίνα. Αρχικοποίηση:
+\begin{itemize}
+	\item Εκτέλεση βασικών ελέγχων λογικής
+	\item Καθορισμός συσκευής
+\end{itemize} 
+\begin{lstlisting}[basicstyle=\scriptsize]
+int main (int argc, char **argv)
+{
+  int deviceCount;
+  cudaGetDeviceCount(&deviceCount);
+  if (deviceCount == 0)
+  {
+    fprintf(stderr, "Sorry, no CUDA device fount");
+    return 1;
+  }
+  if (selectedDevice >= deviceCount)
+  {
+    fprintf(stderr, "Choose device ID between 0 and %d\n", deviceCount-1);
+    return 1;
+  }
+  cudaSetDevice(selectedDevice);
+  checkErrors("initialisations");  
+\end{lstlisting}
+Κατανομή μνήμης στον ξενιστή (κύρια μνήμη CPU) και στην συσκευή, το h\_ ορίζει δεδομένα που διαμένουν στον ξενιστή (host), και το d\_ στην συσκευή.
+\begin{lstlisting}[basicstyle=\scriptsize]  
+  float *h_x = (float*)malloc(N*sizeof(float));
+  float *h_y = (float*)malloc(N*sizeof(float));
+  float *d_x;
+  cudaMalloc((void**)&d_x, N*sizeof(float));
+  float *d_y;
+  cudaMalloc((void**)&d_y, N*sizeof(float));
+  checkErrors("memory allocation");
+
+\end{lstlisting}
+Αρχικοποίηση δεδομένων στην CPU
+\begin{lstlisting}[basicstyle=\scriptsize]  
+  int i;
+  for (i=0; i<N; i++)
+  {
+    h_x[i] = 1.0f + i;
+    h_y[i] = (float)(N-i+1);
+  }
+
+\end{lstlisting}
+Αντιγραφή δεδομένων στην συσκευή
+\begin{lstlisting}[basicstyle=\scriptsize]  
+  cudaMemcpy(d_x, h_x, N*sizeof(float), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_y, h_y, N*sizeof(float), cudaMemcpyHostToDevice);
+  checkErrors("copy data to device");
+\end{lstlisting}
+Εκτέλεση υπολογισμών στον ξενιστή (για να εφαρμόσουμε έλεγχο στα αποτελέσματα αργότερα)
+\begin{lstlisting}[basicstyle=\scriptsize]  
+  saxpy_serial(N, 2.0f, h_x, h_y);
+\end{lstlisting}
+Εκτέλεση υπολογισμών στην συσκευή.
+\begin{itemize}
+\item Χρησιμοποιούμε numThreadsPerBlock νήματα για κάθε block
+\item Ο συνολικός αριθμός των block υπολογίζεται με την στρογγυλοποίηση το μέγεθος διανύσματος Ν έως το επόμενο πολλαπλάσιο του numThreadsPerBlock
+\end{itemize}
+\begin{lstlisting}[basicstyle=\scriptsize]  
+  int numBlocks = (N+numThreadsPerBlock-1) / numThreadsPerBlock;
+  saxpy_parallel<<<numBlocks, numThreadsPerBlock>>>(N, 2.0, d_x, d_y);
+  checkErrors("compute on device");
+\end{lstlisting}
+Διαβάζουμε τα αποτελέσματα από την συσκευή στο προσωρινό διάνυσμα
+\begin{lstlisting}[basicstyle=\scriptsize]  
+  float *h_z = (float*)malloc(N*sizeof(float));
+  cudaMemcpy(h_z, d_y, N*sizeof(float), cudaMemcpyDeviceToHost);
+  checkErrors("copy data from device");
+\end{lstlisting}
+Εκτελούμε σύγκριση των αποτελεσμάτων
+\begin{lstlisting}[basicstyle=\scriptsize]  
+  int errorCount = 0;
+  for (i=0; i<N; i++)
+  {
+    if (abs(h_y[i]-h_z[i]) > 1e-6)
+      errorCount = errorCount + 1;
+  }
+  if (errorCount > 0)
+    printf("Result comparison failed.\n");
+  else
+    printf("Result comparison passed.\n");
+\end{lstlisting}
+Τερματισμός και εκκαθάριση
+\begin{lstlisting}[basicstyle=\scriptsize]  
+  free(h_x);
+  free(h_y);
+  free(h_z);
+  cudaFree(d_x);
+  cudaFree(d_y);
+  return 0;
+}
+\end{lstlisting}
+
+
+\section{Υλοποίηση OpenCL}
+
+Παρακάτω θα δούμε ένα απλό "Hello World" υπολογιστικό παράδειγμα που εξηγεί την βασική χρήση του OpenCL, το οποίο υπολογίζει το μαθηματικό τετράγωνο (X[i] = pow(X[i],2)) για ένα buffer τιμών κινητής υποδιαστολής\cite{code-2}
+
+\begin{lstlisting}[basicstyle=\scriptsize]
+// Abstract:   A simple "Hello World" compute example showing basic usage of OpenCL which
+//             calculates the mathematical square (X[i] = pow(X[i],2)) for a buffer of
+//             floating point values.
+\end{lstlisting}
+
+Σε αυτό το μέρος, φορτώνονται οι βιβλιοθήκες οι οποίες περιέχουν πληροφορίες και βοηθήματα για να εκτελεστεί το κυρίως πρόγραμμα και ο πυρήνας 
+\begin{lstlisting}[basicstyle=\scriptsize] 
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <OpenCL/opencl.h>
+\end{lstlisting}
+ 
+Χρησιμοποιούμε ένα στατικό μέγεθος δεδομένων ώστε το παράδειγμα μας να είναι πιο απλό και πιο εύκολο στην κατανόηση.
+\begin{lstlisting}[basicstyle=\scriptsize]
+// Use a static data size for simplicity
+//
+#define DATA_SIZE (1024)
+\end{lstlisting}
+
+Γράφουμε έναν απλό πυρήνα που υπολογίζει το τετράγωνο ενός πίνακα στοιχείων
+\begin{lstlisting}[basicstyle=\scriptsize]
+// Simple compute kernel which computes the square of an input array 
+//
+const char *KernelSource = "\n" \
+"__kernel void square(                                                       \n" \
+"   __global float* input,                                              \n" \
+"   __global float* output,                                             \n" \
+"   const unsigned int count)                                           \n" \
+"{                                                                      \n" \
+"   int i = get_global_id(0);                                           \n" \
+"   if(i < count)                                                       \n" \
+"       output[i] = input[i] * input[i];                                \n" \
+"}                                                                      \n" \
+"\n";
+\end{lstlisting}
+ 
+Γράφουμε το κυρίως πρόγραμμα που θα εκτελεστεί στην CPU και θα καλέσει τον πυρήνα
+\begin{lstlisting}[basicstyle=\scriptsize]
+int main(int argc, char** argv)
+{
+    int err;                            // error code returned from api calls
+      
+    float data[DATA_SIZE];              // original data set given to device
+    float results[DATA_SIZE];           // results returned from device
+    unsigned int correct;               // number of correct results returned
+
+    size_t global;                      // global domain size for our calculation
+    size_t local;                       // local domain size for our calculation
+
+    cl_device_id device_id;             // compute device id 
+    cl_context context;                 // compute context
+    cl_command_queue commands;          // compute command queue
+    cl_program program;                 // compute program
+    cl_kernel kernel;                   // compute kernel
+    
+    cl_mem input;                       // device memory used for the input array
+    cl_mem output;                      // device memory used for the output array
+\end{lstlisting}
+Γεμίζουμε το set δεδομένων με τυχαίες τιμές κινητής υποδιαστολής
+\begin{lstlisting}[basicstyle=\scriptsize]
+    int i = 0;
+    unsigned int count = DATA_SIZE;
+    for(i = 0; i < count; i++)
+        data[i] = rand() / (float)RAND_MAX;
+\end{lstlisting}
+Συνδεόμαστε σε μια συσκευή υπολογισμού
+\begin{lstlisting}[basicstyle=\scriptsize]
+    int gpu = 1;
+    err = clGetDeviceIDs(NULL, gpu ? CL_DEVICE_TYPE_GPU : CL_DEVICE_TYPE_CPU, 1, &device_id, NULL);
+    if (err != CL_SUCCESS)
+    {
+        printf("Error: Failed to create a device group!\n");
+        return EXIT_FAILURE;
+    }
+\end{lstlisting}
+Δημιουργούμε το περιεχόμενο υπολογισμού
+\begin{lstlisting}[basicstyle=\scriptsize]
+    context = clCreateContext(0, 1, &device_id, NULL, NULL, &err);
+    if (!context)
+    {
+        printf("Error: Failed to create a compute context!\n");
+        return EXIT_FAILURE;
+    }
+\end{lstlisting}
+Δημιουργούμε σειρά εντολών για εκτέλεση
+\begin{lstlisting}[basicstyle=\scriptsize]
+    commands = clCreateCommandQueue(context, device_id, 0, &err);
+    if (!commands)
+    {
+        printf("Error: Failed to create a command commands!\n");
+        return EXIT_FAILURE;
+    }
+\end{lstlisting}
+Δημιουργούμε το πρόγραμμα υπολογισμού από το πηγαίο buffer
+\begin{lstlisting}[basicstyle=\scriptsize]
+    program = clCreateProgramWithSource(context, 1, (const char **) & KernelSource, NULL, &err);
+    if (!program)
+    {
+        printf("Error: Failed to create compute program!\n");
+        return EXIT_FAILURE;
+    }
+\end{lstlisting}
+Κατασκευάζουμε το εκτελέσιμο πρόγραμμα
+\begin{lstlisting}[basicstyle=\scriptsize]
+    err = clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
+    if (err != CL_SUCCESS)
+    {
+        size_t len;
+        char buffer[2048];
+ 
+        printf("Error: Failed to build program executable!\n");
+        clGetProgramBuildInfo(program, device_id, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
+        printf("%s\n", buffer);
+        exit(1);
+    }
+\end{lstlisting}
+Δημιουργούμε τον πυρήνα υπολογισμού στο πρόγραμμα που θέλουμε να εκτελέσουμε
+\begin{lstlisting}[basicstyle=\scriptsize]
+    kernel = clCreateKernel(program, "square", &err);
+    if (!kernel || err != CL_SUCCESS)
+    {
+        printf("Error: Failed to create compute kernel!\n");
+        exit(1);
+    }
+\end{lstlisting}
+Δημιουργούμε τους πίνακες εισόδου και τους πίνακες εξόδου στην μνήμη συσκευής για τους υπολογισμούς μας
+\begin{lstlisting}[basicstyle=\scriptsize]
+    input = clCreateBuffer(context,  CL_MEM_READ_ONLY,  sizeof(float) * count, NULL, NULL);
+    output = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(float) * count, NULL, NULL);
+    if (!input || !output)
+    {
+        printf("Error: Failed to allocate device memory!\n");
+        exit(1);
+    }    
+\end{lstlisting}
+Γράφουμε το set δεδομένων στον πίνακα εισόδου στην μνήμη της συσκευής
+\begin{lstlisting}[basicstyle=\scriptsize]
+    err = clEnqueueWriteBuffer(commands, input, CL_TRUE, 0, sizeof(float) * count, data, 0, NULL, NULL);
+    if (err != CL_SUCCESS)
+    {
+        printf("Error: Failed to write to source array!\n");
+        exit(1);
+    }
+\end{lstlisting}
+Δίνουμε τις παραμέτρους στον πυρήνα υπολογισμού
+\begin{lstlisting}[basicstyle=\scriptsize]
+    err = 0;
+    err  = clSetKernelArg(kernel, 0, sizeof(cl_mem), &input);
+    err |= clSetKernelArg(kernel, 1, sizeof(cl_mem), &output);
+    err |= clSetKernelArg(kernel, 2, sizeof(unsigned int), &count);
+    if (err != CL_SUCCESS)
+    {
+        printf("Error: Failed to set kernel arguments! %d\n", err);
+        exit(1);
+    }
+\end{lstlisting}
+Παίρνουμε το μέγιστο μέγεθος της ομάδας εργασίας για την εκτέλεση του πυρήνα στην συσκευή
+\begin{lstlisting}[basicstyle=\scriptsize]
+    err = clGetKernelWorkGroupInfo(kernel, device_id, CL_KERNEL_WORK_GROUP_SIZE, sizeof(local), &local, NULL);
+    if (err != CL_SUCCESS)
+    {
+        printf("Error: Failed to retrieve kernel work group info! %d\n", err);
+        exit(1);
+    }
+\end{lstlisting}
+Εκτελούμε τον πυρήνα σε ολόκληρο το εύρος του πρώτου σετ δεδομένων χρησιμοποιώντας το μέγιστο αριθμό αντικειμένων ομάδων εργασίας για αυτήν την συσκευή
+\begin{lstlisting}[basicstyle=\scriptsize]
+  
+    global = count;
+    err = clEnqueueNDRangeKernel(commands, kernel, 1, NULL, &global, &local, 0, NULL, NULL);
+    if (err)
+    {
+        printf("Error: Failed to execute kernel!\n");
+        return EXIT_FAILURE;
+    }
+\end{lstlisting}
+Περιμένουμε την σειρά εντολών να εξυπηρετηθεί πριν να διαβάσουμε τα αποτελέσματα
+\begin{lstlisting}[basicstyle=\scriptsize]
+    clFinish(commands);
+\end{lstlisting}
+Διαβάζουμε τα αποτελέσματα από την συσκευή για να επαληθεύσουμε το αποτέλεσμα
+\begin{lstlisting}[basicstyle=\scriptsize]
+    err = clEnqueueReadBuffer( commands, output, CL_TRUE, 0, sizeof(float) * count, results, 0, NULL, NULL );  
+    if (err != CL_SUCCESS)
+    {
+        printf("Error: Failed to read output array! %d\n", err);
+        exit(1);
+    }
+\end{lstlisting}
+Επαλήθευση των αποτελεσμάτων
+\begin{lstlisting}[basicstyle=\scriptsize]
+    correct = 0;
+    for(i = 0; i < count; i++)
+    {
+        if(results[i] == data[i] * data[i])
+            correct++;
+    }
+\end{lstlisting}
+Εκτυπώνουμε μια σύντομη περίληψη εξηγώντας τα αποτελέσματα
+\begin{lstlisting}[basicstyle=\scriptsize]
+    printf("Computed '%d/%d' correct values!\n", correct, count);
+\end{lstlisting}
+Τερματισμός και εκκαθάριση
+\begin{lstlisting}[basicstyle=\scriptsize]
+    clReleaseMemObject(input);
+    clReleaseMemObject(output);
+    clReleaseProgram(program);
+    clReleaseKernel(kernel);
+    clReleaseCommandQueue(commands);
+    clReleaseContext(context);
+ 
+    return 0;
+}
+\end{lstlisting}
+
+\section{Υλοποίηση OpenGL}
+\subsection{Αποστολή}
 Ένα αντικείμενο προγράμματος μπορεί να έχει shader υπολογισμού μέσα του. Ο shader υπολογισμού συνδέεται με καταστάσεις shader μέσω κάποιων λειτουργιών απόδοσης. Υπάρχουν δύο λειτουργίες για να ξεκινήσουν οι διαδικασίες υπολογισμού. Χρησιμοποιούν οποιονδήποτε shader υπολογισμού είναι ενεργός. Οι λειτουργίες είναι οι εξής:
 \begin{itemize}
 \item void glDispatchCompute(GLuint num\_groups\_x, GLuint num\_groups\_u, GLuint num\_groups\_z); - Οι παράμετροι num\_groups\_* ορίζουν τον αριθμό των ομάδων εργασίας, σε τρεις διαστάσεις. Αυτοί οι αριθμοί δεν μπορούν να είναι μηδέν. Υπάρχουν όρια στον αριθμό των ομάδων εργασίας που μπορούν να αποσταλούν.
 \item void glDispatchComputeIndirect(GLintptr indirect); - H παράμετρος indirect είναι το αντιστάθμισμα του buffer GL\_DISPATCH\_INDIRECT\_BUFFER. Ισχύουν τα ίδια όρια του αριθμού ομάδων εργασίας, όμως η αποστολή indirect παρακάμπτει τον έλεγχο λαθών του OpenGL. Έτσι, η αποστολή με εκτός ορίων μεγέθους ομάδας εργασίας, μπορεί να προκαλέσει προβλήματα ακόμα και πάγωμα του συστήματος.
 \end{itemize}
-\subsubsection{Είσοδοι}
+\subsection{Είσοδοι}
 Τα shader υπολογισμού  δεν μπορούν να έχουν μεταβλητές καθορισμένες απο τον χρήστη. Τα shader υπολογισμού έχουν τις παρακάτω ενσωματωμένες μεταβλητές εξόδου:
 \begin{itemize}
 \item in uvec3 gl\_NumWorkGroups; - Αυτή η μεταβλητή περιέχει τον αριθμό των ομάδων εργασίας για την λειτουργία αποστολής
@@ -15,14 +410,14 @@
 \item in uvec3 gl\_GlobalInvocationID; - Αυτή η μεταβλητή αναγνωρίζει μοναδικά την συγκεκριμένη επίκληση του shader υπολογισμού  ανάμεσα σε όλες τις επικλήσεις της κλήσης αποστολής υπολογισμού. Είναι μια συντόμευση για τον μαθηματικό υπολογισμό gl\_WorkGroupID * gl\_WorkGroupSize + gl\_LocalInvocationID;
 \item in uint  gl\_LocalInvocationIndex;
 \end{itemize}
-\subsubsection{Τοπικό μέγεθος}
+\subsection{Τοπικό μέγεθος}
 Το τοπικό μέγεθος ενός shader υπολογισμού ορίζεται απο τον shader, χρησιμοποιώντας μια ειδική δήλωση εισόδου: 
 layout(local\_size\_x = X, local\_size\_y = Y, local\_size\_z = Z) in;
 Αρχικά, τα τοπικά μεγέθη είναι 1, οπότε αν θέλουμε μονοδιάστατο ή δισδιάστατο χώρο ομάδων εργασίας, μπορούμε να ορίσουμε μόνο το Χ ή το Χ και το Υ. Πρέπει να είναι σταθερές εκφράσεις τιμής μεγαλύτερης του 0. Οι τιμές πρέπει να ορίζονται σε σχέση με τους περιορισμούς που υπάρχουν παρακάτω. Σε αντίθετη περίπτωση προκύπτουν λάθη. Το τοπικό μέγεθος είναι διαθέσιμο στον shader σαν σταθερά, οπότε δεν χρειάζεται να την ορίζουμε εμείς.
 \begin{itemize}
 \item const uvec3 gl\_WorkGroupSize;
 \end{itemize}
-\subsubsection{Περιορισμοί}
+\subsection{Περιορισμοί}
 Ο αριθμός των ομάδων εργασίας που μπορούν να αποσταλούν, ορίζεται από μια ειδική σταθερά. Αυτή η σταθερά πρέπει να διαβαστεί απο την glGetIntegeri\_v, με τιμές ανάμεσα στο κλειστό όριο [0,2]. 
 
 Προσπάθεια να καλέσουμε την glDispatchCompute με τιμές που ξεπερνούν το όριο είναι λάθος. Προσπάθεια κλήσης της glDispatchComputeIndirect είναι χειρότερα, μπορεί να διακόψει την λειτουργία του προγράμματος ακόμα και να παγώσει το σύστημα. Σημείωση: ο μικρότερος αριθμός αυτών των τιμών πρέπει να είναι 65535 σε όλους τους άξονες. Αυτό δίνει αρκετό χώρο για εργασία. 
@@ -33,7 +428,7 @@ layout(local\_size\_x = X, local\_size\_y = Y, local\_size\_z = Z) in;
 \item Ο αριθμός των επικλήσεων μέσα σε μια ομάδα εργασίας. Δηλαδή, το προϊόν των στοιχείων Χ,Υ,Ζ του τοπικού μεγέθους πρέπει να είναι μικρότερο απο GL\_MAX\_WORK \_GROUP\_INVOCATIONS. Η μικρότερη τιμή είναι 1024.
 \end{itemize}
 Υπάρχει ακόμα ο περιορισμός του ολικού μεγέθους αποθήκευσης για όλες τις κοινές μεταβλητές ενός shader υπολογισμού. Ορίζεται απο την GL\_MAX\_COMPUTE \_SHARED\_MEMORY\_SIZE, που αναφέρεται σε bytes. Η μικρότερη τιμή για το OpenGL είναι 32KB.
-\subsection{Υλοποίηση DirectX}
+\section{Υλοποίηση DirectX}
 Ένας shader υπολογισμού είναι μια κατάσταση shader υπολογισμού που επεκτείνει την χρήση του το Microsoft Direct3D 11 πέρα απο τον προγραμματισμό γραφικών. Η τεχνολογία αυτή είναι γνωστή και ως τεχνολογία DirectCompute\cite{computeshaders-2}
 
 Όπως όλα τα προγραμματιστικά shader (για παράδειγμα shader γεωμετρίας και κορυφών), ένα shader υπολογισμού είναι σχεδιασμένο να χρησιμοποιεί μια Γλώσσα Υψηλού Προγραμματισμού Shader(HLSL) για το DirectX. Η HLSL, χρησιμοποιείται για το DirectX και μας δίνει την δυνατότητα να δημιουργήσουμε C like shaders για την γραμμή σωλήνων Direct3D. 
