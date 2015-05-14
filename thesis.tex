@@ -5,6 +5,9 @@
 %Long Tables
 \usepackage{longtable}
 
+%Table colors 
+\usepackage{colortbl}
+
 %Table of Contents
 \usepackage{tocloft}
 
@@ -32,8 +35,9 @@
 \usepackage{fancyhdr} 
 \fancypagestyle{main} {
 \fancyhf{}
-\fancyhead[LE,RO]{\nouppercase\rightmark}
-\fancyhead[RE,LO]{\nouppercase\leftmark}
+\fancyhead[LE,LO]{\nouppercase\rightmark}
+%\fancyhead[RE,LO]{\nouppercase\leftmark}
+\fancyhead[RE,RO]{}
 \fancyfoot[CE,CO]{\thepage}
 \fancyfoot[LE,RO]{}
 }
@@ -55,6 +59,8 @@
 %Font Awesome Icons
 \usepackage{fontawesome}
 
+%Float barrier for subsections
+\usepackage{placeins}
 
 \usepackage{hologo}
 \usepackage[top=2.54cm, bottom=2.54cm, left=3.17cm, right=3.17cm]{geometry}
@@ -121,6 +127,7 @@
 \input{general.tex}
 \input{history.tex}
 \input{platforms.tex}
+\input{platforms/ides.tex}
 \input{code/examples.tex}
 \input{applications.tex}
 \input{methodology.tex}

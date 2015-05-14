@@ -394,6 +394,41 @@ int main(int argc, char** argv)
 }
 \end{lstlisting}
 
+\section{Υλοποίηση WebCL}
+Παράδειγμα : Hello WebCL
+Αυτό το παράδειγμα είναι ένα απλό πρόγραμμα "Hello WebCL". Ελέγχει αν το WebCL είναι εγκατεστημένο και καταγράφει μια λίστα με όλες τις διαθέσιμες πλατφόρμες και συσκευές. Επίσης δημιουργεί ένα παράθυρο στο οποίο φαίνεται αν αυτή η αρχικοποίηση πέτυχε ή όχι. 
+
+Ο κώδικας είναι διαθέσιμος παρακάτω:
+\begin{lstlisting}[basicstyle=\scriptsize]
+function detectCL() {
+  // First check if the WebCL extension is installed at all
+  
+  if (window.webcl == undefined) {
+    alert("Unfortunately your system does not support WebCL. " +
+          "Make sure that you have both the OpenCL driver " +
+          "and the WebCL browser extension installed.");
+    return false;
+  }
+
+  // Get a list of available CL platforms, and another list of the
+  // available devices on each platform. If there are no platforms,
+  // or no available devices on any platform, then we can conclude
+  // that WebCL is not available.
+
+  try {
+    var platforms = webcl.getPlatforms();
+    var devices = [];
+    for (var i in platforms) {
+      var plat = platforms[i];
+      devices[i] = plat.getDevices();
+    }
+    alert("Excellent! Your system does support WebCL.");
+  } catch (e) {
+    alert("Unfortunately platform or device inquiry failed.");
+  }
+}
+\end{lstlisting}
+
 \section{Υλοποίηση OpenGL}
 \subsection{Αποστολή}
 Ένα αντικείμενο προγράμματος μπορεί να έχει shader υπολογισμού μέσα του. Ο shader υπολογισμού συνδέεται με καταστάσεις shader μέσω κάποιων λειτουργιών απόδοσης. Υπάρχουν δύο λειτουργίες για να ξεκινήσουν οι διαδικασίες υπολογισμού. Χρησιμοποιούν οποιονδήποτε shader υπολογισμού είναι ενεργός. Οι λειτουργίες είναι οι εξής:
